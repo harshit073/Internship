@@ -106,7 +106,7 @@ const collegeDetails = async function(req,res){
                 .send({status:false, message:"No such college exist or try for abbreviation of same"})
         }
         const interns = await internModel.find({ data: college._id })
-        if(!interns){
+        if(!interns.length){
             return res
                 .status(404)
                 .send({status:false, message:"No intern exist from this college"})
