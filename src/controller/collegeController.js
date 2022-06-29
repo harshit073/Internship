@@ -1,11 +1,14 @@
 const collegeModel = require('../models/collegeModel');
 const internModel = require('../models/internModel');
-const { isValidRequest, isValid, isValidUrl, isValidName } = require('../validator/validation')
+const { isValidRequest, 
+        isValid, 
+        isValidUrl, 
+        isValidName } = require('../validator/validation')
 
 
+//---------------------create College-------------------------------
 const createCollege = async function(req, res){
     try {
-
         if (!isValidRequest(req.body)) {
             return res
                 .status(400)
@@ -13,17 +16,21 @@ const createCollege = async function(req, res){
         }
 
         const { name, fullName, logoLink } = req.body;
-        const collegecollege = {}
+        const collegeData = {}
 
+        //name Validation
         if (name) {
+
             if (!isValidName(name)) {
                 return res
                     .status(400)
-                    .send({ status: false, message: "Enter a valid Name" })
+                    .send({ status: false, message: "Enter a valid Name or enter just the abbreviation" })
             }
-            const isDuplicate = await collegeModel.find({name: name })
-            if (isDuplicate.length == 0) {
-                collegecollege.name = name
+
+            //checking for duplicacy in database
+            const isDuplicate = await collegeModel.findOne({name: name })
+            if (isDuplicate) {
+             collegeData.name = name.trim()
             } else return res
                 .status(400)
                 .send({ status: false, message: `${name} name already exist` })
@@ -31,39 +38,35 @@ const createCollege = async function(req, res){
                 .status(400)
                 .send({ status: false, message: "college name is required" })
 
-
+        //fullName validation
         if(fullName){
             if (!isValid(fullName)) {
                 return res
                     .status(400)
                     .send({ status: false, message: "Enter a valid fullName" })
             }else{
-                collegecollege.fullName = fullName
+             collegeData.fullName = fullName.trim()
             } 
         }else return res
                 .status(400)
                 .send({ status: false, message: "fullName is required" })
 
-
+        //logoLink validation
         if(logoLink){
-            if (!isValid(logoLink)) {
-                return res
-                    .status(400)
-                    .send({ status: false, message: "Enter a valid logoLink url" })
-            }
+
             if(!isValidUrl(logoLink)) {
                 return res
                     .status(400)
                     .send({ status: false, message: "Enter a valid logoLink url format" })
             } else {
-                collegecollege.logoLink = logoLink
+             collegeData.logoLink = logoLink
             }
         }else return res
                 .status(400)
                 .send({ status: false, message: "logoLink is required" })
 
-        
-        const college = await collegeModel.create(collegecollege)
+        //creating the college data
+        const college = await collegeModel.create(collegeData)
         return res
             .status(201)
             .send({ status: true, college: college })
@@ -76,6 +79,7 @@ const createCollege = async function(req, res){
 }
 
 
+//----------------------displaying the list of interns from a particular college----------------------------
 const collegeDetails = async function(req,res){
     try {
         if(!isValidRequest(req.query)){
@@ -85,7 +89,9 @@ const collegeDetails = async function(req,res){
         }
         
         let name = req.query.collegeName || req.query.collegename || req.query.COLLEGENAME
-        name = name.toLowerCase()
+        name = name.toLowerCase() //converting the value in query params in lowercase as only lowercase is acceptable
+
+        //name validation for college name
         if(!isValid(name)){
             return res
                 .status(400)
@@ -105,6 +111,8 @@ const collegeDetails = async function(req,res){
                 .status(404)
                 .send({status:false, message:"No intern exist from this college"})
         }
+
+        //creating an object with the required keys to be displayed
         const data = {
             name: college.name,
             fullName: college.fullName,
