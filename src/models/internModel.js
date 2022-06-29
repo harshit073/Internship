@@ -9,7 +9,8 @@ const internSchema = new mongoose.Schema({
     email:{
         required:'email is required',
         type:String,
-        unique: true
+        unique: true,
+        lowecase: true
     },
     mobile:{
         required:'mobile number is required',
