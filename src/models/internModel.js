@@ -10,11 +10,11 @@ const internSchema = new mongoose.Schema({
         required:'email is required',
         type:String,
         unique: true,
-        lowecase: true
+        lowercase: true
     },
     mobile:{
         required:'mobile number is required',
-        type: Number,
+        type: String,
         unique:true
     },
     collegeId:{

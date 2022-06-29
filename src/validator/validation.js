@@ -6,7 +6,7 @@ const isValidRequest = function(data){
 }
 
 const isValidName = function(name){
-  let pattern = /^[a-zA-Z ]{2,10}$/
+  let pattern = /^[a-zA-Z ]{2,20}$/
   if(pattern.test(name)){
     return true
   }
@@ -29,7 +29,12 @@ const isValidUrl = function(url){
     return false;
 }
 
+const isValidMail = function (email) {
+  return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+};
 
 
-
-module.exports = {isValid, isValidUrl, isValidName, isValidRequest}
+const isValidMobile = function(mobile){
+  return  /^[6-9]\d{9}$/.test(mobile);
+};
+module.exports = {isValid, isValidUrl, isValidName, isValidRequest, isValidMail, isValidMobile}
