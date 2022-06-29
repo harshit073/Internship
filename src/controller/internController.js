@@ -51,6 +51,9 @@ const createIntern = async function(req, res){
             return res
             .status(400)
             .send({status:false, message:"email or mobile number is already in use"})
+        }else{
+             internData.email = email;
+             internData.mobile = mobile;
         }
 
         if(collegeName){
@@ -72,9 +75,6 @@ const createIntern = async function(req, res){
             .status(400)
             .send({status:false, message:"collegeName is required"})
         
-        internData.email = email;
-        internData.mobile = mobile;
-
         const intern = await internModel.create(internData)
         return res
                 .status(201)
