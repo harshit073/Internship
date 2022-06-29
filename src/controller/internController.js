@@ -46,7 +46,7 @@ const createIntern = async function(req, res){
             .status(400)
             .send({status:false, message:"Mobile number is required"})
 
-        const isDuplicate = await internModel.findOne({$or:[{email:email, mobile:mobile}]})
+        const isDuplicate = await internModel.findOne({$or:[{email:email} , {mobile:mobile}]})
         if(isDuplicate){
             return res
             .status(400)
