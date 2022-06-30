@@ -29,10 +29,10 @@ const createCollege = async function(req, res){
 
             //checking for duplicacy in database
             const isDuplicate = await collegeModel.findOne({name: name })
-            if (isDuplicate) {
-             collegeData.name = name.trim()
+            if (!isDuplicate) {
+             collegeData.name = name.trim().toLowerCase()
             } else return res
-                .status(400)
+                .status(409)
                 .send({ status: false, message: `${name} name already exist` })
         }else return res
                 .status(400)
@@ -69,7 +69,7 @@ const createCollege = async function(req, res){
         const college = await collegeModel.create(collegeData)
         return res
             .status(201)
-            .send({ status: true, college: college })
+            .send({ status: true, data: college })
     }
     catch (error) {
         return res
@@ -79,7 +79,7 @@ const createCollege = async function(req, res){
 }
 
 
-//----------------------displaying the list of interns from a particular college----------------------------
+//---------------------------displaying the list of interns from a particular college----------------------------
 const collegeDetails = async function(req,res){
     try {
         if(!isValidRequest(req.query)){
@@ -88,7 +88,7 @@ const collegeDetails = async function(req,res){
                 .send({status:false, message:"Enter a valid query"})
         }
         
-        let name = req.query.collegeName || req.query.collegename || req.query.COLLEGENAME
+        let name = req.query.collegeName
         name = name.toLowerCase() //converting the value in query params in lowercase as only lowercase is acceptable
 
         //name validation for college name
@@ -105,20 +105,20 @@ const collegeDetails = async function(req,res){
                 .status(404)
                 .send({status:false, message:"No such college exist or try for abbreviation of same"})
         }
-        const interns = await internModel.find({ collegeId: college._id })
-        if(!interns){
-            return res
-                .status(404)
-                .send({status:false, message:"No intern exist from this college"})
-        }
 
-        //creating an object with the required keys to be displayed
         const data = {
             name: college.name,
             fullName: college.fullName,
-            logoLink: college.logoLink,
-            interns: interns
+            logoLink: college.logoLink
         }
+        const interns = await internModel.find({ collegeId: college._id })
+
+        //creating an object with the required keys to be displayed
+        if(!interns.length){
+            data.interns = "No intern exist for this college"
+        }else{ 
+                    data.interns= interns
+            }
         return res
             .status(200)
             .send({ status: true, data })

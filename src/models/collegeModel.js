@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-// const url = mongoose.Schema.Types.Url
+
 
 const collegeSchema = new mongoose.Schema({
     name: {
