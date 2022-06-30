@@ -122,7 +122,7 @@ const collegeDetails = async function(req,res){
             }
         return res
             .status(200)
-            .send({ data })
+            .send({ status: true, data })
     }
     catch(error){
         return res
