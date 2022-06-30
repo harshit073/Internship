@@ -29,6 +29,7 @@ const createCollege = async function(req, res){
 
             //checking for duplicacy in database
             const isDuplicate = await collegeModel.findOne({name: name })
+            
             if (!isDuplicate) {
              collegeData.name = name.trim().toLowerCase()
             } else return res
@@ -117,7 +118,7 @@ const collegeDetails = async function(req,res){
         if(!interns.length){
             data.interns = "No intern exist for this college"
         }else{ 
-                    data.interns= interns
+                data.interns= interns
             }
         return res
             .status(200)
