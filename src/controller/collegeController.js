@@ -15,12 +15,12 @@ const createCollege = async function(req, res){
                 .send({ status: false, message: "Enter a valid Input" })
         }
 
-        const { name, fullName, logoLink } = req.body;
-        const collegeData = {}
+        let { name, fullName, logoLink } = req.body;
+        let collegeData = {}
 
         //name Validation
         if (name) {
-
+            name.toLowerCase()
             if (!isValidName(name)) {
                 return res
                     .status(400)
@@ -29,9 +29,9 @@ const createCollege = async function(req, res){
 
             //checking for duplicacy in database
             const isDuplicate = await collegeModel.findOne({name: name })
-            
+
             if (!isDuplicate) {
-             collegeData.name = name.trim().toLowerCase()
+             collegeData.name = name.trim()
             } else return res
                 .status(409)
                 .send({ status: false, message: `${name} name already exist` })
