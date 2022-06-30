@@ -45,6 +45,7 @@ const createIntern = async function(req, res){
         
         //mobile number validation
         if(mobile){
+            mobile = mobile.trim()
             if(!isValidMobile(mobile))
                 return res
                 .status(400)
@@ -54,9 +55,9 @@ const createIntern = async function(req, res){
             .send({status:false, message:"Mobile number is required"})
 
         //checking the duplicacy of email and mobile number
-        const isDuplicate = await internModel.findOne({$or:[{email:email} , {mobile:mobile}]})
+        const isDuplicate = await internModel.findOne({$or:[{email:email}, {mobile:mobile}]})
 
-        if(!isDuplicate){
+        if(isDuplicate){
             return res
             .status(400)
             .send({status:false, message:"email or mobile number is already in use"})
@@ -67,13 +68,13 @@ const createIntern = async function(req, res){
 
         //validating the collegename and finding the college
         if(collegeName){
-
+            collegeName = collegeName.toLowerCase().trim()
             if(!isValidName(collegeName)){
                 return res
                 .status(400)
                 .send({status:false, message:"Enter a Valid college name"})
             }else{
-                const college = await collegeModel.findOne({name: collegeName.toLowerCase()})
+                const college = await collegeModel.findOne({name: collegeName})
 
                 //getting college Id from college name 
                 if(college){

@@ -20,7 +20,7 @@ const createCollege = async function(req, res){
 
         //name Validation
         if (name) {
-            name.toLowerCase()
+            name = name.toLowerCase().trim()
             if (!isValidName(name)) {
                 return res
                     .status(400)
@@ -30,11 +30,11 @@ const createCollege = async function(req, res){
             //checking for duplicacy in database
             const isDuplicate = await collegeModel.findOne({name: name })
 
-            if (!isDuplicate) {
-             collegeData.name = name.trim()
-            } else return res
+            if (isDuplicate) {
+                return res
                 .status(409)
-                .send({ status: false, message: `${name} name already exist` })
+                .send({ status: false, message: `${name} name already exist` }) 
+            } else collegeData.name = name
         }else return res
                 .status(400)
                 .send({ status: false, message: "college name is required" })
@@ -90,7 +90,7 @@ const collegeDetails = async function(req,res){
         }
         
         let name = req.query.collegeName
-        name = name.toLowerCase() //converting the value in query params in lowercase as only lowercase is acceptable
+        name = name.trim().toLowerCase() //converting the value in query params in lowercase as only lowercase is acceptable
 
         //name validation for college name
         if(!isValid(name)){
@@ -112,7 +112,7 @@ const collegeDetails = async function(req,res){
             fullName: college.fullName,
             logoLink: college.logoLink
         }
-        const interns = await internModel.find({ collegeId: college._id })
+        const interns = await internModel.find({ collegeId: college._id }).select({collegeId:0, isDeleted:0, __v:0})
 
         //creating an object with the required keys to be displayed
         if(!interns.length){
@@ -122,7 +122,7 @@ const collegeDetails = async function(req,res){
             }
         return res
             .status(200)
-            .send({ status: true, data })
+            .send({ data })
     }
     catch(error){
         return res
