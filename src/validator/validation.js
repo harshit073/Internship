@@ -17,8 +17,8 @@ const isValidName = function(name){
 }
 
 //function for verifying intern name
-const isValidIntern= function(name){
-  let pattern = /^[a-zA-Z ]{4,20}$/
+const isValidString= function(name){
+  let pattern = /^[a-zA-Z ]{4,50}$/
   if(pattern.test(name)){
     return true
   }
@@ -27,19 +27,19 @@ const isValidIntern= function(name){
 
 
 //function for verifying string 
-const isValid = function (name) {
-    if (typeof name == undefined || typeof name == null) return false;
-    if (typeof name == "string" && name.trim().length == 0) return false;
-    else if (typeof name == "string"){
+// const isValid = function (name) {
+//     if (typeof name == undefined || typeof name == null) return false;
+//     if (typeof name == "string" && name.trim().length == 0) return false;
+//     else if (typeof name == "string"){
           
-          return true;
-    }
-  };
+//           return true;
+//     }
+//   };
 
 
   //function for verifying link
 const isValidUrl = function(url){
-    let re = /^(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g
+    let re = /^(https?:\/\/.*\.(?:png|jpg|jpeg))$/g
     if(re.test(url)){
         return true;
     }
@@ -59,10 +59,10 @@ const isValidMobile = function(mobile){
 };
 
 
-module.exports = {isValid,
+module.exports = {
                   isValidUrl,
                   isValidName,
                   isValidRequest, 
                   isValidMail, 
                   isValidMobile,
-                  isValidIntern}
+                  isValidString}

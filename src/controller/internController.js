@@ -4,7 +4,7 @@ const {isValidRequest,
         isValidName, 
         isValidMail,
         isValidMobile,
-        isValidIntern} = require('../validator/validation')
+        isValidString} = require('../validator/validation')
 
 // -----------------------------create Intern------------------------------------
 const createIntern = async function(req, res){
@@ -22,12 +22,13 @@ const createIntern = async function(req, res){
 
         //intern name validation
         if(name){
-            if(!isValidIntern(name)){
+            name = name.trim()
+            if(!isValidString(name)){
                 return res
                     .status(400)
                     .send({status:false, message:"Enter a valid name"})
             }else{
-                internData.name = name.trim()
+                internData.name = name
             }
         }else return res
                 .status(400)

@@ -1,9 +1,9 @@
 const collegeModel = require('../models/collegeModel');
 const internModel = require('../models/internModel');
 const { isValidRequest, 
-        isValid, 
         isValidUrl, 
-        isValidName } = require('../validator/validation')
+        isValidName, 
+        isValidString} = require('../validator/validation')
 
 
 //---------------------create College-------------------------------
@@ -41,12 +41,13 @@ const createCollege = async function(req, res){
 
         //fullName validation
         if(fullName){
-            if (!isValid(fullName)) {
+            fullName = fullName.trim()
+            if (!isValidString(fullName)) {
                 return res
                     .status(400)
                     .send({ status: false, message: "Enter a valid fullName" })
             }else{
-             collegeData.fullName = fullName.trim()
+             collegeData.fullName = fullName
             } 
         }else return res
                 .status(400)
@@ -93,7 +94,7 @@ const collegeDetails = async function(req,res){
         name = name.trim().toLowerCase() //converting the value in query params in lowercase as only lowercase is acceptable
 
         //name validation for college name
-        if(!isValid(name)){
+        if(!isValidName(name)){
             return res
                 .status(400)
                 .send({status:false, message:"Enter a valid query value"})
@@ -107,18 +108,17 @@ const collegeDetails = async function(req,res){
                 .send({status:false, message:"No such college exist or try for abbreviation of same"})
         }
 
-        const data = {
-            name: college.name,
-            fullName: college.fullName,
-            logoLink: college.logoLink
-        }
-        const interns = await internModel.find({ collegeId: college._id }).select({collegeId:0, isDeleted:0, __v:0})
+        //an object 'data' with the selective keys from college model
+        const data = await collegeModel.findOne({ name: name}).select({_id:0, isDeleted:0, __v:0})
 
-        //creating an object with the required keys to be displayed
+        const interns = await internModel.find({ collegeId: college._id }).select({collegeId:0, isDeleted:0, __v:0})
+        
+        //using .doc method to display the details of college along with that of interns
         if(!interns.length){
-            data.interns = "No intern exist for this college"
+            data._doc["interns"] = interns
+
         }else{ 
-                data.interns= interns
+                data._doc["interns"] = interns
             }
         return res
             .status(200)
